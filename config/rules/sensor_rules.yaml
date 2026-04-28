@@ -1,0 +1,77 @@
+# 传感器检测规则
+# Sensor Detection Rules
+
+rules:
+  - name: "data_range_validation"
+    type: "range_check"
+    severity: "medium"
+    description: "检测传感器数据超出合理范围"
+    algorithm:
+      type: "boundary_validation"
+      sensors:
+        temperature:
+          min: -40
+          max: 85
+          units: "°C"
+        pressure:
+          min: 300
+          max: 1100
+          units: "hPa"
+        magnetometer:
+          min_x: -1000
+          max_x: 1000
+          min_y: -1000
+          max_y: 1000
+          min_z: -1000
+          max_z: 1000
+          units: "mGauss"
+
+  - name: "sensor_consistency"
+    type: "multi_sensor_validation"
+    severity: "high"
+    description: "检测传感器间数据不一致"
+    algorithm:
+      type: "cross_validation"
+      validations:
+        - sensors: ["barometer_altitude", "gps_altitude"]
+          max_difference: 50.0  # 米
+          tolerance: 10.0  # 米
+        - sensors: ["accel_magnitude", "gravity"]
+          expected_value: 9.81  # m/s²
+          max_deviation: 5.0  # m/s²
+
+  - name: "noise_pattern_check"
+    type: "statistical_analysis"
+    severity: "low"
+    description: "检测传感器噪声模式异常"
+    algorithm:
+      type: "noise_analysis"
+      window_size: 100
+      variance_threshold: 5.0
+      outlier_detection:
+        method: "iqr"  # iqr 或 zscore
+        threshold: 3.0
+
+  - name: "imu_anomaly_detection"
+    type: "statistical_analysis"
+    severity: "high"
+    description: "检测IMU数据异常"
+    algorithm:
+      type: "value_validation"
+      gyro:
+        max_rate: 1000.0  # rad/s
+        max_continuous: 0.5  # 秒
+      accel:
+        max_magnitude: 50.0  # m/s²
+        expected_magnitude: 9.81  # m/s²
+        max_deviation: 20.0  # m/s²
+
+  - name: "drift_detection"
+    type: "time_analysis"
+    severity: "medium"
+    description: "检测传感器漂移"
+    algorithm:
+      type: "drift_monitoring"
+      sensors: ["magnetometer", "accelerometer"]
+      max_drift_rate: 0.1  # 单位/秒
+      monitoring_window: 60  # 秒

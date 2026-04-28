@@ -1,0 +1,60 @@
+# GPS 检测规则
+# GPS Detection Rules
+
+rules:
+  - name: "position_jump_detection"
+    type: "kinematic_analysis"
+    severity: "high"
+    description: "检测不可能的位置跳变"
+    algorithm:
+      type: "velocity_constraint"
+      max_jump_distance: 1000  # 米
+      max_velocity_mismatch: 5.0  # m/s
+      time_delta_threshold: 0.1  # 秒
+
+  - name: "velocity_constraint"
+    type: "kinematic_analysis"
+    severity: "medium"
+    description: "检测违反物理约束的速度"
+    algorithm:
+      type: "acceleration_limit"
+      max_acceleration: 10.0  # m/s²
+      max_deceleration: 20.0  # m/s²
+
+  - name: "signal_quality_check"
+    type: "signal_analysis"
+    severity: "medium"
+    description: "检测GPS信号质量异常"
+    algorithm:
+      type: "dop_analysis"
+      hdop_threshold: 20.0
+      vdop_threshold: 20.0
+      hdop_change_threshold: 3.0  # 相对于平均值的倍数
+
+  - name: "satellite_anomaly"
+    type: "signal_analysis"
+    severity: "high"
+    description: "检测卫星数量异常"
+    algorithm:
+      type: "count_validation"
+      min_satellites: 6
+      low_count_threshold: 3
+      low_count_duration: 10  # 秒
+
+  - name: "time_sync_validation"
+    type: "time_analysis"
+    severity: "critical"
+    description: "检测时间同步异常"
+    algorithm:
+      type: "nmea_time_check"
+      max_time_drift: 1.0  # 秒
+      check_interval: 5.0  # 秒
+
+  - name: "altitude_consistency"
+    type: "multi_sensor_validation"
+    severity: "medium"
+    description: "检测GPS高度与其他传感器不一致"
+    algorithm:
+      type: "cross_reference"
+      sources: ["barometer", "sonar"]
+      max_altitude_difference: 50.0  # 米

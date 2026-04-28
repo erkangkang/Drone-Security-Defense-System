@@ -1,0 +1,53 @@
+# MAVLink 检测规则
+# MAVLink Detection Rules
+
+rules:
+  - name: "message_sequence_check"
+    type: "sequence_validation"
+    severity: "medium"
+    description: "检测消息序列号丢失或重放攻击"
+    algorithm:
+      type: "sliding_window"
+      window_size: 100
+      threshold: 0.05  # 5% 丢失率触发告警
+
+  - name: "system_id_validation"
+    type: "identity_check"
+    severity: "high"
+    description: "检测系统ID或组件ID变更"
+    algorithm:
+      type: "whitelist"
+      allowed_system_ids: [1, 255]
+      allowed_component_ids: [1, 50, 190, 191, 192, 200]
+
+  - name: "command_injection"
+    type: "command_analysis"
+    severity: "critical"
+    description: "检测异常或未授权命令"
+    algorithm:
+      type: "signature_matching"
+      patterns:
+        - suspicious_parameter_sequences
+        - malformed_commands
+      dangerous_commands:
+        - MAV_CMD_COMPONENT_ARM_DISARM
+        - MAV_CMD_DO_SET_MODE
+        - MAV_CMD_NAV_TAKEOFF
+        - MAV_CMD_NAV_LAND
+
+  - name: "frequency_anomaly"
+    type: "frequency_analysis"
+    severity: "medium"
+    description: "检测异常消息频率"
+    algorithm:
+      type: "rate_limiter"
+      max_messages_per_second: 1000
+      burst_threshold: 5000
+
+  - name: "message_integrity"
+    type: "integrity_check"
+    severity: "high"
+    description: "检测消息完整性问题"
+    algorithm:
+      type: "checksum_validation"
+      enable_crc_check: true

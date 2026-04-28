@@ -1,0 +1,239 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #070A0C;
+    --bg-secondary: #0C1113;
+    --bg-card: #111A1D;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-cyan: #00E6A8;
+    --border-color: #1B2A2F;
+  }
+
+  * {
+    border-color: var(--border-color);
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#070A0C];
+    @apply disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply btn bg-[#00E6A820] text-[#00E6A8] border border-[#00E6A850] hover:bg-[#00E6A830];
+    @apply focus-visible:ring-[#00E6A8];
+  }
+
+  .btn-danger {
+    @apply btn bg-[#f43f5e20] text-[#fb7185] border border-[#f43f5e50] hover:bg-[#f43f5e30];
+    @apply focus-visible:ring-[#f43f5e];
+  }
+
+  .btn-success {
+    @apply btn bg-[#22c55e20] text-[#4ade80] border border-[#22c55e50] hover:bg-[#22c55e30];
+    @apply focus-visible:ring-[#22c55e];
+  }
+
+  .btn-secondary {
+    @apply btn bg-[#111A1D] text-[#94a3b8] border border-[#1B2A2F] hover:bg-[#182529] hover:text-[#e2e8f0];
+    @apply focus-visible:ring-[#1B2A2F];
+  }
+
+  .input {
+    @apply flex h-10 w-full rounded-md border border-[#1B2A2F] bg-[#070A0C] px-3 py-2;
+    @apply text-sm text-[#e2e8f0] placeholder:text-[#64748b];
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00E6A850];
+    @apply disabled:cursor-not-allowed disabled:opacity-50;
+  }
+}
+
+/* ===== Sci-fi glassmorphism ===== */
+.glass {
+  background: rgba(17, 24, 39, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 230, 168, 0.1);
+  position: relative;
+}
+.glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 230, 168, 0.28), transparent);
+  pointer-events: none;
+}
+
+/* ===== HUD frame with corner decorations ===== */
+.hud-frame {
+  position: relative;
+  border: 1px solid rgba(0, 230, 168, 0.14);
+}
+.hud-frame::before,
+.hud-frame::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+}
+.hud-frame::before {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid rgba(0, 230, 168, 0.55);
+  border-left: 2px solid rgba(0, 230, 168, 0.55);
+}
+.hud-frame::after {
+  top: -1px;
+  right: -1px;
+  border-top: 2px solid rgba(0, 230, 168, 0.55);
+  border-right: 2px solid rgba(0, 230, 168, 0.55);
+}
+.hud-frame-bl::before,
+.hud-frame-br::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+}
+.hud-frame-bl::before {
+  bottom: -1px;
+  left: -1px;
+  border-bottom: 2px solid rgba(0, 230, 168, 0.55);
+  border-left: 2px solid rgba(0, 230, 168, 0.55);
+}
+.hud-frame-br::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid rgba(0, 230, 168, 0.55);
+  border-right: 2px solid rgba(0, 230, 168, 0.55);
+}
+
+/* ===== Hexagonal panel via clip-path ===== */
+.hex-panel {
+  clip-path: polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%);
+  transition: all 0.3s ease;
+}
+.hex-panel:hover {
+  filter: brightness(1.1);
+}
+
+/* ===== Neon text glow ===== */
+.neon-text {
+  text-shadow: 0 0 8px rgba(0, 230, 168, 0.45), 0 0 18px rgba(0, 230, 168, 0.18);
+}
+.neon-text-green {
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.5), 0 0 16px rgba(16, 185, 129, 0.2);
+}
+.neon-text-red {
+  text-shadow: 0 0 8px rgba(255, 45, 85, 0.5), 0 0 16px rgba(255, 45, 85, 0.2);
+}
+
+/* ===== Glow border breathing ===== */
+.glow-border {
+  animation: border-glow 3s ease-in-out infinite;
+}
+
+/* ===== Data stream background ===== */
+.data-stream-bg {
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 230, 168, 0.018) 2px,
+    rgba(0, 230, 168, 0.018) 4px
+  );
+  background-size: 100% 8px;
+  animation: data-stream 3s linear infinite;
+}
+
+/* ===== Leaflet dark overrides ===== */
+.leaflet-container {
+  background: #070A0C;
+}
+.leaflet-popup-content-wrapper {
+  background: #0C1113;
+  color: #e2e8f0;
+  border: 1px solid #1B2A2F;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 230, 168, 0.08);
+}
+.leaflet-popup-tip {
+  background: #0C1113;
+}
+.leaflet-popup-close-button {
+  color: #94a3b8 !important;
+}
+.leaflet-popup-close-button:hover {
+  color: #e2e8f0 !important;
+}
+.leaflet-control-zoom a {
+  background: #0C1113 !important;
+  color: #e2e8f0 !important;
+  border-color: #1B2A2F !important;
+}
+.leaflet-control-zoom a:hover {
+  background: #111A1D !important;
+}
+.leaflet-control-attribution {
+  background: rgba(7, 10, 12, 0.84) !important;
+  color: #64748b !important;
+}
+.leaflet-control-attribution a {
+  color: #00B386 !important;
+}
+
+/* Grid background - refined thinner lines */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(27, 42, 47, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(27, 42, 47, 0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #070A0C;
+}
+::-webkit-scrollbar-thumb {
+  background: #1B2A2F;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00B386;
+}
+
+/* Scan animation */
+@keyframes scan-line {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+.animate-scan {
+  animation: scan-line 4s linear infinite;
+}
+
+/* ===== Mask image for fade edges ===== */
+.mask-fade-edges {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+}

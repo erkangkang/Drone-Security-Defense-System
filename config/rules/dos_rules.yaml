@@ -1,0 +1,67 @@
+# DoS 检测规则
+# DoS Detection Rules
+
+rules:
+  - name: "connection_rate_limiting"
+    type: "rate_limiting"
+    severity: "high"
+    description: "r检测连接频率异常"
+    algorithm:
+      type: "sliding_window"
+      window_size: 10  # 秒
+      max_connections_per_second: 10
+      max_connections_per_minute: 100
+      burst_threshold: 50
+
+  - name: "request_flood_detection"
+    type: "flood_detection"
+    severity: "critical"
+    description: "检测请求洪泛攻击"
+    algorithm:
+      type: "frequency_analysis"
+      per_ip_limit:
+        requests_per_second: 10
+        requests_per_minute: 100
+      global_limit:
+        requests_per_second: 100
+        requests_per_minute: 1000
+
+  - name: "resource_exhaustion_detection"
+    type: "resource_monitoring"
+    severity: "high"
+    description: "检测资源耗尽攻击"
+    algorithm:
+      type: "usage_threshold"
+      cpu_usage_threshold: 80  # %
+      memory_usage_threshold: 80  # %
+      disk_io_threshold: 90  # %
+      network_bandwidth_threshold: 90  # %
+
+  - name: "syn_flood_detection"
+    type: "protocol_analysis"
+    severity: "critical"
+    description: "检测SYN洪泛攻击"
+    algorithm:
+      type: "tcp_state_analysis"
+      max_half_open_connections: 100
+      syn_rate_threshold: 10  # SYN/秒
+
+  - name: "udp_flood_detection"
+    type: "protocol_analysis"
+    severity: "high"
+    description: "检测UDP洪泛攻击"
+    algorithm:
+      type: "packet_analysis"
+      max_packets_per_second: 1000
+      max_packet_size: 65535
+      abnormal_pattern_threshold: 5.0
+
+  - name: "slowloris_detection"
+    type: "timing_analysis"
+    severity: "medium"
+    description: "检测Slowloris慢速攻击"
+    algorithm:
+      type: "connection_timing"
+      max_connection_duration: 300  # 秒
+      min_data_rate: 1  # 字节/秒
+      max_slow_connections: 50

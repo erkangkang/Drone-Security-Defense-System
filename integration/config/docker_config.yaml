@@ -1,0 +1,137 @@
+# 无人机网络安全防御系统 - Docker集成配置
+# Drone Security Defense System - Docker Integration Config
+
+version: "1.0.0"
+log_level: "INFO"
+log_path: "/app/logs/"
+
+# 平台配置
+platform:
+  auto_detect: true
+  resource_profile: "balanced"
+
+# 检测器配置
+detectors:
+  mavlink:
+    enabled: true
+    interval: 0.1
+    rules:
+      - message_sequence_check
+      - system_id_validation
+      - command_whitelist
+    settings:
+      max_message_gap: 10
+      allowed_system_ids: [1, 255]
+      allowed_component_ids: [1, 50, 190, 191, 192]
+      allowed_commands: []
+
+  gps:
+    enabled: true
+    interval: 0.5
+    rules:
+      - position_jump_detection
+      - velocity_constraint
+      - signal_quality_check
+      - time_sync_validation
+    settings:
+      max_jump_distance: 1000
+      max_acceleration: 10.0
+      min_satellites: 6
+      max_velocity_mismatch: 5.0
+
+  sensor:
+    enabled: true
+    interval: 0.1
+    rules:
+      - data_range_validation
+      - sensor_consistency
+      - noise_pattern_check
+    settings:
+      temperature_range: [-40, 85]
+      pressure_range: [300, 1100]
+      imu_max_rate: 1000.0
+
+  dos:
+    enabled: true
+    interval: 1.0
+    settings:
+      max_connections_per_second: 10
+      max_connections_per_minute: 100
+      max_requests_per_second: 50
+      block_duration: 300
+
+  firmware:
+    enabled: false
+    interval: 3600
+
+# 分析器配置
+analyzers:
+  statistical:
+    enabled: true
+    window_size: 100
+    outlier_threshold: 3.0
+    outlier_method: "zscore"
+  correlation:
+    enabled: true
+    time_window: 30.0
+  ml:
+    enabled: false
+
+# 告警配置
+alerts:
+  enabled: true
+  handlers:
+    - type: "console"
+    - type: "log"
+      level: "INFO"
+    - type: "file"
+      path: "/app/logs/alerts.log"
+  severity_levels:
+    low:
+      cooldown: 60
+    medium:
+      cooldown: 30
+    high:
+      cooldown: 10
+      immediate: true
+    critical:
+      cooldown: 0
+      immediate: true
+
+# 阻断配置
+blocking:
+  enabled: false
+
+# 云端配置
+cloud:
+  enabled: false
+
+# 接口配置 - 监听来自DVD伴飞计算机的MAVLink数据
+interfaces:
+  mavlink:
+    enabled: true
+    connection_string: "udpin:0.0.0.0:14560"
+
+  gps:
+    enabled: false
+
+  network:
+    enabled: false
+
+# Web服务器配置 - 端口9090避免与DVD的gzweb(8080)冲突
+web:
+  enabled: true
+  host: "0.0.0.0"
+  port: 9090
+  debug: false
+  log_level: "info"
+  cors_origins: ["*"]
+  static_files: "/app/src/frontend/dist"
+  websocket:
+    enabled: true
+    ping_interval: 30
+  broadcaster:
+    enabled: true
+    interval: 5.0
+  auth:
+    enabled: false
